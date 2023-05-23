@@ -1,5 +1,19 @@
-from controller import TransactionController
+import os 
+os.system('cls')
 
-print("Bem vindo, ao seu gerenciador de transações!")
+from Controllers.DataController import TransactionController
+from Controllers.MainController import MainController
 
-TransactionController.delete_transaction_by_id(TransactionController(), '5')
+option = MainController.main_menu()
+
+    
+        
+    
+
+
+
+
+
+
+
+# TransactionController.delete_transaction_by_id(TransactionController(), '5')

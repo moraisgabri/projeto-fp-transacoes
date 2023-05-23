@@ -1,4 +1,4 @@
-from constants import DEFAULT_COMMA_CODE
+from Controllers.Constants import DEFAULT_COMMA_CODE
 class TransactionController: 
   transactions = []
 
@@ -19,7 +19,6 @@ class TransactionController:
 
         for without_pipes_string in splitted_values:
           # unpacking em dois valores do array 'chave:valor'
-          print(without_pipes_string)
           key, value = without_pipes_string.split(':')
 
           transaction[key] = value
@@ -27,6 +26,7 @@ class TransactionController:
         transactions.append(transaction)
 
       self.transactions = transactions
+      return transactions
 
   def add_transaction_in_db(self, transaction):
     last_transaction = self.transactions[-1]
