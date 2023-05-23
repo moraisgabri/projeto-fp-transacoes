@@ -11,17 +11,25 @@ class MainController:
         print("3 - Buscar uma transação por id")
         print("4 - Deletar uma transação por id")
         print("5 - Listar transações por categoria")
-        print("6 - Enviar dados por e-mail")
-        print("7 - Sair \n")
+        print("6 - Editar uma transação por id")
+        print("7 - Enviar dados por e-mail")
+        print("8 - Sair \n")
         option = input(">> ")
         if option == '1':
             MainController.list_all_transactions()
         elif option == '2':
             MainController.add_new_transaction()
-        elif option == '6':
+        elif option == '3':
+            MainController.search_transaction_by_id()
+        elif option == '8':
             exit()
 
         return option
+
+    def return_main_menu():
+        input("\nPressione ENTER para voltar ao menu principal...")
+        os.system('cls')
+        MainController.main_menu()
 
     def list_all_transactions():
         transactions = TransactionController.get_all_from_db(
@@ -41,9 +49,7 @@ class MainController:
         for row in transactionsValues:
             print("{: ^5} {: ^20} {: ^20} {: ^20}".format(*row))
 
-        input("\nPressione ENTER para voltar ao menu principal...")
-        os.system('cls')
-        MainController.main_menu()
+        MainController.return_main_menu()
 
     def add_new_transaction():
         os.system('cls')
@@ -62,6 +68,25 @@ class MainController:
             TransactionController(), transaction)
 
         print("\nTransação adicionada com sucesso!")
-        input("\nPressione ENTER para voltar ao menu principal...")
+        MainController.return_main_menu()
+
+    def search_transaction_by_id():
         os.system('cls')
-        MainController.main_menu()
+        print("Buscar transação por id: \n")
+        id = input("Id: ")
+
+        transaction = TransactionController.get_transaction_by_id(
+            TransactionController(), id)
+
+        if transaction == None:
+            print("\nTransação não encontrada!")
+            MainController.return_main_menu()
+        else:
+            print("\nTransação encontrada:")
+            print("{: ^5} {: ^20} {: ^20} {: ^20}".format(
+                "ID", "Categoria", "Nome", "Valor"))
+            print("-" * 65)
+            print("{: ^5} {: ^20} {: ^20} {: ^20}".format(
+                transaction['id'], transaction['category'], transaction['name'], transaction['value']))
+
+            MainController.return_main_menu()

@@ -52,7 +52,6 @@ class TransactionController:
   def get_transaction_by_id(self, id):
     for transaction in self.transactions:
       if transaction['id'] == id:
-        print(transaction)
         return transaction
     
   def delete_transaction_by_id(self, id):
