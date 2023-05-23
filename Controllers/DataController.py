@@ -57,7 +57,6 @@ class TransactionController:
   def delete_transaction_by_id(self, id):
     transaction = self.get_transaction_by_id(id)
     transaction_index = self.transactions.index(transaction)
-    print(transaction_index)
     del self.transactions[transaction_index]
 
     self.update_db()
@@ -94,6 +93,14 @@ class TransactionController:
       parsed_keys_and_values.append(f'{key}:{value}'if is_last_item  else f'{key}:{value};')
     
     return ''.join(parsed_keys_and_values)
+  
+  def get_transactions_by_category(self, category):
+    transactions = []
+    for transaction in self.transactions:
+      if transaction['category'] == category:
+        transactions.append(transaction)
+    
+    return transactions
 
   def __init__(self):
     self.get_all_from_db()
