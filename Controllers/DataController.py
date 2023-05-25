@@ -32,7 +32,7 @@ class TransactionController:
     last_transaction = self.transactions[-1]
     last_id = int(last_transaction['id'])
 
-    transaction['id']= last_id + 1
+    transaction['id'] = last_id + 1
 
     parsed_keys_and_values = []
     transaction_items = transaction.items()

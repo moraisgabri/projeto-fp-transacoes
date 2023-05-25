@@ -15,7 +15,7 @@ class MainController:
         print("7 - Enviar dados por e-mail")
         print("8 - Sair \n")
         option = input(">> ")
-        
+
         if option == '1':
             MainController.list_all_transactions()
         elif option == '2':
@@ -46,6 +46,7 @@ class MainController:
         print("Lista de transações: \n")
 
         transactionsValues = []
+
         for i in range(len(transactions)):
             transactionsValues.append([transactions[i]['id'], transactions[i]
                                       ['category'], transactions[i]['name'], transactions[i]['value']])
