@@ -37,151 +37,231 @@ class MainController:
             exit()
 
         return option
+    
+    def isNumber(n):
+      try:
+        float(n)
+      except ValueError:
+            return False
+      return True
 
     def return_main_menu():
-        input("\nPressione ENTER para voltar ao menu principal...")
-        os.system('cls')
-        MainController.main_menu()
+          try: 
+            input("\nPressione ENTER para voltar ao menu principal...")
+            os.system('cls')
+            MainController.main_menu()
+          except:
+              return
 
     def list_all_transactions():
-        transactions = TransactionController.get_all_from_db(
-            transactionController)
-        os.system('cls')
+        try:
+          transactions = TransactionController.get_all_from_db(
+              transactionController)
+          os.system('cls')
 
-        print("Lista de transações: \n")
+          print("Lista de transações: \n")
 
-        transactionsValues = []
+          transactionsValues = []
 
-        for i in range(len(transactions)):
-            transactionsValues.append([transactions[i]['id'], transactions[i]
-                                      ['category'], transactions[i]['name'], transactions[i]['value']])
+          for i in range(len(transactions)):
+              transactionsValues.append([transactions[i]['id'], transactions[i]
+                                        ['category'], transactions[i]['name'], transactions[i]['value']])
 
-        print("{: ^5} {: ^20} {: ^20} {: ^20}".format(
-            "ID", "Categoria", "Nome", "Valor"))
-        print("-" * 65)
-        for row in transactionsValues:
-            print("{: ^5} {: ^20} {: ^20} {: ^20}".format(*row))
+          print("{: ^5} {: ^20} {: ^20} {: ^20}".format(
+              "ID", "Categoria", "Nome", "Valor"))
+          print("-" * 65)
+          for row in transactionsValues:
+              print("{: ^5} {: ^20} {: ^20} {: ^20}".format(*row))
 
-        MainController.return_main_menu()
+          return MainController.return_main_menu()
+
+        except:
+            print('Erro ao listar todas as transações.')
+            return MainController.return_main_menu()
+
+
 
     def add_new_transaction():
-        os.system('cls')
-        print("Adicionar uma nova transação: \n")
-        category = input("Categoria: ")
-        name = input("Nome: ")
-        value = input("Valor: ")
+        try:
+          os.system('cls')
+          print("Adicionar uma nova transação: \n")
+          category = input("Categoria: ")
+          name = input("Nome: ")
+          value = input("Valor: ")
 
-        transaction = {
-            'category': category,
-            'name': name,
-            'value': value,
-        }
+          if not MainController.isNumber(value):
+            print('O valor deve ser um número.')
+            return MainController.return_main_menu()
 
-        TransactionController.add_transaction_in_db(
-            transactionController, transaction)
 
-        print("\nTransação adicionada com sucesso!")
-        MainController.return_main_menu()
+          transaction = {
+              'category': category.replace(',', ' ').replace(';', ' '),
+              'name': name.replace(',', ' ').replace(';', ' '),
+              'value': value.replace(',', ' ').replace(';', ' ')
+          }
+
+          if transaction['category'].replace(" ", "") == '' or transaction['name'].replace(" ", "") == '' or transaction['value'].replace(" ", "") == '':
+              print("\nTodos os campos são obrigatórios!")
+              return MainController.return_main_menu()
+
+          TransactionController.add_transaction_in_db(
+              transactionController, transaction)
+
+          print("\nTransação adicionada com sucesso!")
+          return MainController.return_main_menu()
+
+        except:
+            print('Erro ao adicionar nova transação.')
+            return MainController.return_main_menu()
+
+            
 
     def search_transaction_by_id():
-        os.system('cls')
-        print("Buscar transação por id: \n")
-        id = input("Id: ")
+        try: 
+          os.system('cls')
+          print("Buscar transação por id: \n")
+          id = input("Id: ")
 
-        transaction = TransactionController.get_transaction_by_id(
-            transactionController, id)
+          transaction = TransactionController.get_transaction_by_id(
+              transactionController, id)
 
-        if transaction == None:
-            print("\nTransação não encontrada!")
-            MainController.return_main_menu()
-        else:
-            print("\nTransação encontrada:")
-            print("{: ^5} {: ^20} {: ^20} {: ^20}".format(
-                "ID", "Categoria", "Nome", "Valor"))
-            print("-" * 65)
-            print("{: ^5} {: ^20} {: ^20} {: ^20}".format(
-                transaction['id'], transaction['category'], transaction['name'], transaction['value']))
+          if transaction == None:
+              print("\nTransação não encontrada!")
+              return MainController.return_main_menu()
 
-            MainController.return_main_menu()
+          else:
+              print("\nTransação encontrada:")
+              print("{: ^5} {: ^20} {: ^20} {: ^20}".format(
+                  "ID", "Categoria", "Nome", "Valor"))
+              print("-" * 65)
+              print("{: ^5} {: ^20} {: ^20} {: ^20}".format(
+                  transaction['id'], transaction['category'], transaction['name'], transaction['value']))
+
+              return MainController.return_main_menu()
+
+        except:
+            print('Erro ao buscar transação por id.')
+            return MainController.return_main_menu()
+
     
     def delete_transaction_by_id():
-        os.system('cls')
-        print("Deletar transação por id: \n")
-        id = input("Id: ")
+        try:
+          os.system('cls')
+          print("Deletar transação por id: \n")
+          id = input("Id: ")
 
-        transaction = TransactionController.get_transaction_by_id(
-            transactionController, id)
+          transaction = TransactionController.get_transaction_by_id(
+              transactionController, id)
 
-        if transaction == None:
-            print("\nTransação não encontrada!")
-            MainController.return_main_menu()
-        else:
-            TransactionController.delete_transaction_by_id(transactionController, id)
-            print("\nTransação deletada com sucesso!")
-            MainController.return_main_menu()
+          if transaction == None:
+              print("\nTransação não encontrada!")
+              return MainController.return_main_menu()
+
+          else:
+              TransactionController.delete_transaction_by_id(transactionController, id)
+              print("\nTransação deletada com sucesso!")
+              return MainController.return_main_menu()
+
+        except:
+            print('Erro ao deletar transação por id.')
+            return MainController.return_main_menu()
+
+
     
     def list_transactions_by_category():
-        os.system('cls')
-        print("Listar transações por categoria: \n")
-        category = input("Categoria: ")
+        try:
+          os.system('cls')
+          print("Listar transações por categoria: \n")
+          category = input("Categoria: ")
 
-        transactions = TransactionController.get_transactions_by_category(transactionController, category)
+          transactions = TransactionController.get_transactions_by_category(transactionController, category)
 
-        if transactions == []:
-            print("\nNão há transações nessa categoria!")
-            MainController.return_main_menu()
-        else:
-            print("\nTransações encontradas:")
-            print("{: ^5} {: ^20} {: ^20} {: ^20}".format(
-                "ID", "Categoria", "Nome", "Valor"))
-            print("-" * 65)
-            for transaction in transactions:
-                print("{: ^5} {: ^20} {: ^20} {: ^20}".format(
-                transaction['id'], transaction['category'], transaction['name'], transaction['value']))
+          if transactions == []:
+              print("\nNão há transações nessa categoria!")
+              return MainController.return_main_menu()
 
-            MainController.return_main_menu()
+          else:
+              print("\nTransações encontradas:")
+              print("{: ^5} {: ^20} {: ^20} {: ^20}".format(
+                  "ID", "Categoria", "Nome", "Valor"))
+              print("-" * 65)
+              for transaction in transactions:
+                  print("{: ^5} {: ^20} {: ^20} {: ^20}".format(
+                  transaction['id'], transaction['category'], transaction['name'], transaction['value']))
+
+              return MainController.return_main_menu()
+
+        except:
+            print('Erro ao listar transações por categoria.')
+            return MainController.return_main_menu()
+
+
+
     def update_transaction_by_id():
-        os.system('cls')
-        print("Editar transação por id: \n")
-        id = input("Id: ")
+        try:
+          os.system('cls')
+          print("Editar transação por id: \n")
+          id = input("Id: ")
 
-        transaction = TransactionController.get_transaction_by_id(
-            transactionController, id)
+          transaction = TransactionController.get_transaction_by_id(
+              transactionController, id)
 
-        if transaction == None:
-            print("\nTransação não encontrada!")
-            MainController.return_main_menu()
-        else:
-            print("\nTransação encontrada:")
-            print("{: ^5} {: ^20} {: ^20} {: ^20}".format(
-                "ID", "Categoria", "Nome", "Valor"))
-            print("-" * 65)
-            print("{: ^5} {: ^20} {: ^20} {: ^20}".format(
-                transaction['id'], transaction['category'], transaction['name'], transaction['value']))
+          if transaction == None:
+              print("\nTransação não encontrada!")
+              return MainController.return_main_menu()
 
-            print("\nDigite os novos dados da transação: \n")
-            category = input("Categoria: ")
-            name = input("Nome: ")
-            value = input("Valor: ")
+          else:
+              print("\nTransação encontrada:")
+              print("{: ^5} {: ^20} {: ^20} {: ^20}".format(
+                  "ID", "Categoria", "Nome", "Valor"))
+              print("-" * 65)
+              print("{: ^5} {: ^20} {: ^20} {: ^20}".format(
+                  transaction['id'], transaction['category'], transaction['name'], transaction['value']))
 
-            newTransaction = {
-                'category': category,
-                'name': name,
-                'value': value,
-                'id': id
-            }
+              print("\nDigite os novos dados da transação: \n")
+              category = input("Categoria: ")
+              name = input("Nome: ")
+              value = input("Valor: ")
 
-            TransactionController.update_transaction_by_id(transactionController, id, newTransaction)
+              if not MainController.isNumber(value):
+                print('O valor deve ser um número.')
+                return MainController.return_main_menu()
 
-            print("\nTransação atualizada com sucesso!")
-            MainController.return_main_menu()
+
+              newTransaction = {
+                  'category': category.replace(',', ' ').replace(';', ' '),
+                  'name': name.replace(',', ' ').replace(';', ' '),
+                  'value': value.replace(',', ' ').replace(';', ' '),
+                  'id': id
+              }
+
+              if newTransaction['category'].replace(" ", "") == '' == '' or newTransaction['name'].replace(" ", "") ==  '' or newTransaction['value'].replace(" ", "") == '':
+                  print("\nTodos os campos são obrigatórios!")
+                  return MainController.return_main_menu()
+
+              TransactionController.update_transaction_by_id(transactionController, id, newTransaction)
+
+              print("\nTransação atualizada com sucesso!")
+              return MainController.return_main_menu()
+
+        except:
+            print('Erro ao atualizar transação por id.')
+            return MainController.return_main_menu()
+
+
 
     def send_data_by_email():
-      os.system('cls')
-      print("Enviar dados por e-mail: \n")
-      email = input("E-mail: ")
+      try:
+        os.system('cls')
+        print("Enviar dados por e-mail: \n")
+        email = input("E-mail: ")
 
-      TransactionController.send_data_by_email(transactionController, email)
+        TransactionController.send_data_by_email(transactionController, email)
 
-      print("\nDados enviados com sucesso!")
-      MainController.return_main_menu()
+        print("\nDados enviados com sucesso!")
+        return MainController.return_main_menu()
+
+      except:
+          print('Erro ao enviar dados por e-mail.')
+          return MainController.return_main_menu()
+
