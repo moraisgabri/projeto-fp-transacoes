@@ -1,5 +1,6 @@
 from Controllers.Constants import DEFAULT_COMMA_CODE
-class TransactionController: 
+import smtplib
+class TransactionController:
   transactions = []
 
   def get_all_from_db(self):
@@ -13,7 +14,7 @@ class TransactionController:
         transaction = {}
         # Normalizando as víruglas para evitar que conflitem com csv
         normalized_string = db_transaction.replace(DEFAULT_COMMA_CODE, ',')
-        
+
         # Removendo as divisões entre chaves e valores
         splitted_values = normalized_string.split(';')
 
@@ -41,7 +42,7 @@ class TransactionController:
       key, value = key_and_value_tuple
       is_last_item = index == len(transaction_items) - 1
       parsed_keys_and_values.append(f'{key}:{value}'if is_last_item  else f'{key}:{value};')
-    
+
     transaction_string = ',' + ''.join(parsed_keys_and_values)
 
     db = open('transactions.csv', 'a')
@@ -53,7 +54,7 @@ class TransactionController:
     for transaction in self.transactions:
       if transaction['id'] == id:
         return transaction
-    
+
   def delete_transaction_by_id(self, id):
     transaction = self.get_transaction_by_id(id)
     transaction_index = self.transactions.index(transaction)
@@ -79,7 +80,7 @@ class TransactionController:
     for transaction in self.transactions:
       parsed = self.parse_to_csv(transaction)
       csv += parsed + ',' if transaction != self.transactions[-1] else parsed
-    
+
     db = open('transactions.csv', 'a')
     db.write(csv)
 
@@ -91,16 +92,29 @@ class TransactionController:
       key, value = key_and_value_tuple
       is_last_item = index == len(transaction_items) - 1
       parsed_keys_and_values.append(f'{key}:{value}'if is_last_item  else f'{key}:{value};')
-    
+
     return ''.join(parsed_keys_and_values)
-  
+
   def get_transactions_by_category(self, category):
     transactions = []
     for transaction in self.transactions:
       if transaction['category'] == category:
         transactions.append(transaction)
-    
+
     return transactions
+
+  def send_data_by_email(self, email):
+    transactions = self.get_all_from_db()
+    transactions_string = '\nSeu resumo de transações: \n\nTotal de transações: ' + str(len(transactions)) + '\n\n'
+
+    for transaction in transactions:
+      transactions_string += f'Id da transação: {transaction["id"]}, Nome: {transaction["name"]}, Categoria: {transaction["category"]}, Valor: {transaction["value"]} \n'
+
+    server = smtplib.SMTP('smtp-mail.outlook.com: 587')
+    server.starttls()
+    server.login("projetoipcesar@outlook.com", "projetoip10")
+    server.sendmail("projetoipcesar@outlook.com", email, transactions_string.encode('utf-8'))
+    server.quit()
 
   def __init__(self):
     self.get_all_from_db()

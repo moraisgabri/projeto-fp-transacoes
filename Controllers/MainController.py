@@ -1,5 +1,8 @@
 from Controllers.DataController import TransactionController
 import os
+import smtplib
+
+transactionController = TransactionController()
 
 
 class MainController:
@@ -28,6 +31,8 @@ class MainController:
             MainController.list_transactions_by_category()
         elif option == '6':
             MainController.update_transaction_by_id()
+        elif option == '7':
+            MainController.send_data_by_email()
         elif option == '8':
             exit()
 
@@ -40,7 +45,7 @@ class MainController:
 
     def list_all_transactions():
         transactions = TransactionController.get_all_from_db(
-            TransactionController())
+            transactionController)
         os.system('cls')
 
         print("Lista de transações: \n")
@@ -73,7 +78,7 @@ class MainController:
         }
 
         TransactionController.add_transaction_in_db(
-            TransactionController(), transaction)
+            transactionController, transaction)
 
         print("\nTransação adicionada com sucesso!")
         MainController.return_main_menu()
@@ -84,7 +89,7 @@ class MainController:
         id = input("Id: ")
 
         transaction = TransactionController.get_transaction_by_id(
-            TransactionController(), id)
+            transactionController, id)
 
         if transaction == None:
             print("\nTransação não encontrada!")
@@ -105,13 +110,13 @@ class MainController:
         id = input("Id: ")
 
         transaction = TransactionController.get_transaction_by_id(
-            TransactionController(), id)
+            transactionController, id)
 
         if transaction == None:
             print("\nTransação não encontrada!")
             MainController.return_main_menu()
         else:
-            TransactionController.delete_transaction_by_id(TransactionController(), id)
+            TransactionController.delete_transaction_by_id(transactionController, id)
             print("\nTransação deletada com sucesso!")
             MainController.return_main_menu()
     
@@ -120,7 +125,7 @@ class MainController:
         print("Listar transações por categoria: \n")
         category = input("Categoria: ")
 
-        transactions = TransactionController.get_transactions_by_category(TransactionController(), category)
+        transactions = TransactionController.get_transactions_by_category(transactionController, category)
 
         if transactions == []:
             print("\nNão há transações nessa categoria!")
@@ -141,7 +146,7 @@ class MainController:
         id = input("Id: ")
 
         transaction = TransactionController.get_transaction_by_id(
-            TransactionController(), id)
+            transactionController, id)
 
         if transaction == None:
             print("\nTransação não encontrada!")
@@ -166,7 +171,17 @@ class MainController:
                 'id': id
             }
 
-            TransactionController.update_transaction_by_id(TransactionController(), id, newTransaction)
+            TransactionController.update_transaction_by_id(transactionController, id, newTransaction)
 
             print("\nTransação atualizada com sucesso!")
             MainController.return_main_menu()
+
+    def send_data_by_email():
+      os.system('cls')
+      print("Enviar dados por e-mail: \n")
+      email = input("E-mail: ")
+
+      TransactionController.send_data_by_email(transactionController, email)
+
+      print("\nDados enviados com sucesso!")
+      MainController.return_main_menu()
