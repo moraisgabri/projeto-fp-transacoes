@@ -1,9 +1,5 @@
-from Controllers.DataController import TransactionController
+from TransactionModel import transactionModel
 import os
-import smtplib
-
-transactionController = TransactionController()
-
 
 class MainController:
     def main_menu():
@@ -55,8 +51,7 @@ class MainController:
 
     def list_all_transactions():
         try:
-          transactions = TransactionController.get_all_from_db(
-              transactionController)
+          transactions = transactionModel.get_all_from_db()
           os.system('cls')
 
           print("Lista de transações: \n")
@@ -104,8 +99,7 @@ class MainController:
               print("\nTodos os campos são obrigatórios!")
               return MainController.return_main_menu()
 
-          TransactionController.add_transaction_in_db(
-              transactionController, transaction)
+          transactionModel.add_transaction_in_db(transaction)
 
           print("\nTransação adicionada com sucesso!")
           return MainController.return_main_menu()
@@ -122,8 +116,7 @@ class MainController:
           print("Buscar transação por id: \n")
           id = input("Id: ")
 
-          transaction = TransactionController.get_transaction_by_id(
-              transactionController, id)
+          transaction = transactionModel.get_transaction_by_id(id)
 
           if transaction == None:
               print("\nTransação não encontrada!")
@@ -150,15 +143,14 @@ class MainController:
           print("Deletar transação por id: \n")
           id = input("Id: ")
 
-          transaction = TransactionController.get_transaction_by_id(
-              transactionController, id)
+          transaction = transactionModel.get_transaction_by_id(id)
 
           if transaction == None:
               print("\nTransação não encontrada!")
               return MainController.return_main_menu()
 
           else:
-              TransactionController.delete_transaction_by_id(transactionController, id)
+              transactionModel.delete_transaction_by_id(id)
               print("\nTransação deletada com sucesso!")
               return MainController.return_main_menu()
 
@@ -174,7 +166,7 @@ class MainController:
           print("Listar transações por categoria: \n")
           category = input("Categoria: ")
 
-          transactions = TransactionController.get_transactions_by_category(transactionController, category)
+          transactions = transactionModel.get_transactions_by_category(category)
 
           if transactions == []:
               print("\nNão há transações nessa categoria!")
@@ -203,8 +195,7 @@ class MainController:
           print("Editar transação por id: \n")
           id = input("Id: ")
 
-          transaction = TransactionController.get_transaction_by_id(
-              transactionController, id)
+          transaction = transactionModel.get_transaction_by_id(id)
 
           if transaction == None:
               print("\nTransação não encontrada!")
@@ -239,7 +230,7 @@ class MainController:
                   print("\nTodos os campos são obrigatórios!")
                   return MainController.return_main_menu()
 
-              TransactionController.update_transaction_by_id(transactionController, id, newTransaction)
+              transactionModel.update_transaction_by_id(id, newTransaction)
 
               print("\nTransação atualizada com sucesso!")
               return MainController.return_main_menu()
@@ -256,7 +247,7 @@ class MainController:
         print("Enviar dados por e-mail: \n")
         email = input("E-mail: ")
 
-        TransactionController.send_data_by_email(transactionController, email)
+        transactionModel.send_data_by_email(email)
 
         print("\nDados enviados com sucesso!")
         return MainController.return_main_menu()

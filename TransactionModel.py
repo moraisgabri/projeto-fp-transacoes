@@ -1,6 +1,7 @@
-from Controllers.Constants import DEFAULT_COMMA_CODE
+from Constants import DEFAULT_COMMA_CODE
 import smtplib
-class TransactionController:
+
+class TransactionModel:
   transactions = []
 
   def get_all_from_db(self):
@@ -29,7 +30,8 @@ class TransactionController:
 
         self.transactions = transactions
         return transactions
-    except:
+    except Exception as e:
+      print(e)
       print('Erro ao buscar as transações no banco de dados.')
 
   def add_transaction_in_db(self, transaction):
@@ -53,7 +55,7 @@ class TransactionController:
       db.write(transaction_string)
       db.close()
       self.get_all_from_db()
-    except:
+    except Exception as e:
       print('Erro ao adicionar a transação.')
 
   def get_transaction_by_id(self, id):
@@ -61,7 +63,7 @@ class TransactionController:
       for transaction in self.transactions:
         if transaction['id'] == id:
           return transaction
-    except:
+    except Exception as e:
       print('Erro ao buscar a transação.')
 
   def delete_transaction_by_id(self, id):
@@ -71,7 +73,7 @@ class TransactionController:
       del self.transactions[transaction_index]
 
       self.update_db()
-    except:
+    except Exception as e:
       print('Erro ao deletar a transação.')
 
   def update_transaction_by_id(self, id, new_transaction):
@@ -82,7 +84,7 @@ class TransactionController:
       self.transactions[transaction_index] = new_transaction
 
       self.update_db()
-    except:
+    except Exception as e:
       print('Erro ao atualizar a transação.')
 
   def update_db(self):
@@ -99,7 +101,7 @@ class TransactionController:
 
       db = open('transactions.csv', 'a')
       db.write(csv)
-    except:
+    except Exception as e:
       print('Erro ao atualizar o banco de dados.')
 
 
@@ -114,7 +116,7 @@ class TransactionController:
         parsed_keys_and_values.append(f'{key}:{value}'if is_last_item  else f'{key}:{value};')
 
       return ''.join(parsed_keys_and_values)
-    except:
+    except Exception as e:
       print('Erro ao converter para csv.')
 
   def get_transactions_by_category(self, category):
@@ -125,13 +127,14 @@ class TransactionController:
           transactions.append(transaction)
 
       return transactions
-    except:
+    except Exception as e:
       print('Erro ao buscar transações por categoria.')
 
   def send_data_by_email(self, email):
     try:
       transactions = self.get_all_from_db()
-      transactions_string = '\nSeu resumo de transações: \n\nTotal de transações: ' + str(len(transactions)) + '\n\n'
+      
+      transactions_string = 'Subject: Seu resumo de gastos chegou!\n\nSeu resumo de transações: \n\nTotal de transações: ' + str(len(transactions)) + '\n\n'
 
       for transaction in transactions:
         transactions_string += f'Id da transação: {transaction["id"]}, Nome: {transaction["name"]}, Categoria: {transaction["category"]}, Valor: {transaction["value"]} \n'
@@ -141,8 +144,10 @@ class TransactionController:
       server.login("projetoipcesar@outlook.com", "projetoip10")
       server.sendmail("projetoipcesar@outlook.com", email, transactions_string.encode('utf-8'))
       server.quit()
-    except:
+    except Exception as e:
       print('Erro ao enviar email.')
 
   def __init__(self):
     self.get_all_from_db()
+
+transactionModel = TransactionModel()
